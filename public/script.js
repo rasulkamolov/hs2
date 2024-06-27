@@ -1,4 +1,4 @@
-const BASE_URL = 'https://your-app-name.herokuapp.com';
+const BASE_URL = 'https://harvardbks-974c895495ee.herokuapp.com';
 
 function loadInventory() {
     fetch(`${BASE_URL}/api/data`)
