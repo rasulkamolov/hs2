@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>s
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,7 +17,24 @@
                 <form id="addBookForm">
                     <div class="form-group">
                         <label for="bookTitle">Book Title</label>
-                        <input type="text" class="form-control" id="bookTitle" required>
+                        <select class="form-control" id="bookTitle" required>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Elementary">Elementary</option>
+                            <option value="Pre-Intermediate">Pre-Intermediate</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Kids Level 1">Kids Level 1</option>
+                            <option value="Kids Level 2">Kids Level 2</option>
+                            <option value="Kids Level 3">Kids Level 3</option>
+                            <option value="Kids Level 4">Kids Level 4</option>
+                            <option value="Kids Level 5">Kids Level 5</option>
+                            <option value="Kids Level 6">Kids Level 6</option>
+                            <option value="Kids High Level 1">Kids High Level 1</option>
+                            <option value="Kids High Level 2">Kids High Level 2</option>
+                            <option value="Listening Beginner">Listening Beginner</option>
+                            <option value="Listening Elementary">Listening Elementary</option>
+                            <option value="Listening Pre-Intermediate">Listening Pre-Intermediate</option>
+                            <option value="Listening Intermediate">Listening Intermediate</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="quantity">Quantity</label>
@@ -31,7 +48,24 @@
                 <form id="sellBookForm">
                     <div class="form-group">
                         <label for="sellBookTitle">Book Title</label>
-                        <input type="text" class="form-control" id="sellBookTitle" required>
+                        <select class="form-control" id="sellBookTitle" required>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Elementary">Elementary</option>
+                            <option value="Pre-Intermediate">Pre-Intermediate</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Kids Level 1">Kids Level 1</option>
+                            <option value="Kids Level 2">Kids Level 2</option>
+                            <option value="Kids Level 3">Kids Level 3</option>
+                            <option value="Kids Level 4">Kids Level 4</option>
+                            <option value="Kids Level 5">Kids Level 5</option>
+                            <option value="Kids Level 6">Kids Level 6</option>
+                            <option value="Kids High Level 1">Kids High Level 1</option>
+                            <option value="Kids High Level 2">Kids High Level 2</option>
+                            <option value="Listening Beginner">Listening Beginner</option>
+                            <option value="Listening Elementary">Listening Elementary</option>
+                            <option value="Listening Pre-Intermediate">Listening Pre-Intermediate</option>
+                            <option value="Listening Intermediate">Listening Intermediate</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="sellQuantity">Quantity</label>
@@ -56,6 +90,7 @@
                     </thead>
                     <tbody></tbody>
                 </table>
+                <h4>Total: <span id="totalInventory"></span></h4>
                 <button class="btn btn-secondary" onclick="exportCurrentInventory()">Export Current Inventory</button>
             </div>
         </div>
@@ -75,6 +110,7 @@
                     </thead>
                     <tbody></tbody>
                 </table>
+                <h4>Total: <span id="totalStats"></span></h4>
                 <button class="btn btn-secondary" onclick="exportTodaysStatistics()">Export Today's Statistics</button>
                 <div class="form-group mt-3">
                     <label for="filterDate">Filter by Date</label>
