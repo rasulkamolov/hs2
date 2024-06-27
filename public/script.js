@@ -6,6 +6,7 @@ function loadInventory() {
         .then(data => {
             const inventoryTable = document.getElementById('inventoryTable').getElementsByTagName('tbody')[0];
             inventoryTable.innerHTML = '';
+            let totalInventory = 0;
 
             data.books.forEach((book, index) => {
                 const row = inventoryTable.insertRow();
@@ -13,6 +14,7 @@ function loadInventory() {
                 row.insertCell().textContent = book.price.toLocaleString();
                 row.insertCell().textContent = book.quantity;
                 row.insertCell().textContent = (book.price * book.quantity).toLocaleString();
+                totalInventory += book.price * book.quantity;
 
                 const editCell = row.insertCell();
                 const editIcon = document.createElement('i');
@@ -21,6 +23,8 @@ function loadInventory() {
                 editIcon.addEventListener('click', () => editBook(index, book.title));
                 editCell.appendChild(editIcon);
             });
+
+            document.getElementById('totalInventory').textContent = totalInventory.toLocaleString();
         });
 }
 
@@ -30,6 +34,7 @@ function loadTodaysStats() {
         .then(data => {
             const statsTable = document.getElementById('statsTable').getElementsByTagName('tbody')[0];
             statsTable.innerHTML = '';
+            let totalStats = 0;
 
             data.transactions.forEach((transaction, index) => {
                 const row = statsTable.insertRow();
@@ -38,6 +43,7 @@ function loadTodaysStats() {
                 row.insertCell().textContent = transaction.quantity;
                 row.insertCell().textContent = transaction.total.toLocaleString();
                 row.insertCell().textContent = transaction.timestamp;
+                totalStats += transaction.total;
 
                 const deleteCell = row.insertCell();
                 const deleteIcon = document.createElement('i');
@@ -46,6 +52,8 @@ function loadTodaysStats() {
                 deleteIcon.addEventListener('click', () => deleteTransaction(index));
                 deleteCell.appendChild(deleteIcon);
             });
+
+            document.getElementById('totalStats').textContent = totalStats.toLocaleString();
         });
 }
 
@@ -81,17 +89,27 @@ function sellBook() {
     const title = document.getElementById('sellBookTitle').value;
     const quantity = parseInt(document.getElementById('sellQuantity').value);
 
-    fetch(`${BASE_URL}/api/books`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ title: title, price: getPrice(title), quantity: -quantity })
-    })
+    fetch(`${BASE_URL}/api/data`)
         .then(response => response.json())
-        .then(() => {
-            loadInventory();
-            addTransaction('Sold', title, quantity);
+        .then(data => {
+            const book = data.books.find(book => book.title === title);
+            if (!book || book.quantity < quantity) {
+                alert('Out of stock');
+                return;
+            }
+
+            fetch(`${BASE_URL}/api/books`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title: title, price: getPrice(title), quantity: -quantity })
+            })
+                .then(response => response.json())
+                .then(() => {
+                    loadInventory();
+                    addTransaction('Sold', title, quantity);
+                });
         });
 }
 
