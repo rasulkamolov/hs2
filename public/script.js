@@ -37,20 +37,22 @@ function loadTodaysStats() {
             let totalStats = 0;
 
             data.transactions.forEach((transaction, index) => {
-                const row = statsTable.insertRow();
-                row.insertCell().textContent = transaction.action;
-                row.insertCell().textContent = transaction.book;
-                row.insertCell().textContent = transaction.quantity;
-                row.insertCell().textContent = transaction.total.toLocaleString();
-                row.insertCell().textContent = transaction.timestamp;
-                totalStats += transaction.total;
+                if (transaction.action === 'Sold') {
+                    const row = statsTable.insertRow();
+                    row.insertCell().textContent = transaction.action;
+                    row.insertCell().textContent = transaction.book;
+                    row.insertCell().textContent = transaction.quantity;
+                    row.insertCell().textContent = transaction.total.toLocaleString();
+                    row.insertCell().textContent = transaction.timestamp;
+                    totalStats += transaction.total;
 
-                const deleteCell = row.insertCell();
-                const deleteIcon = document.createElement('i');
-                deleteIcon.classList.add('bi', 'bi-trash', 'delete-icon');
-                deleteIcon.style.cursor = 'pointer';
-                deleteIcon.addEventListener('click', () => deleteTransaction(index));
-                deleteCell.appendChild(deleteIcon);
+                    const deleteCell = row.insertCell();
+                    const deleteIcon = document.createElement('i');
+                    deleteIcon.classList.add('bi', 'bi-trash', 'delete-icon');
+                    deleteIcon.style.cursor = 'pointer';
+                    deleteIcon.addEventListener('click', () => deleteTransaction(index));
+                    deleteCell.appendChild(deleteIcon);
+                }
             });
 
             document.getElementById('totalStats').textContent = totalStats.toLocaleString();
@@ -80,6 +82,7 @@ function addBook() {
     })
         .then(response => response.json())
         .then(() => {
+            alert(`${quantity} copies of "${title}" added.`);
             loadInventory();
             addTransaction('Added', title, quantity);
         });
@@ -107,6 +110,7 @@ function sellBook() {
             })
                 .then(response => response.json())
                 .then(() => {
+                    alert(`${quantity} copies of "${title}" sold.`);
                     loadInventory();
                     addTransaction('Sold', title, quantity);
                 });
@@ -240,7 +244,7 @@ function exportTodaysStatistics() {
     fetch(`${BASE_URL}/api/data`)
         .then(response => response.json())
         .then(data => {
-            const csv = convertToCSV(data.transactions);
+            const csv = convertToCSV(data.transactions.filter(transaction => transaction.action === 'Sold'));
             downloadCSV(csv, 'todays_statistics.csv');
         });
 }
