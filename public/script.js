@@ -1,4 +1,5 @@
 const BASE_URL = 'https://harvardbks-974c895495ee.herokuapp.com';
+let currentDate = new Date();
 
 function loadInventory() {
     fetch(`${BASE_URL}/api/data`)
@@ -28,7 +29,7 @@ function loadInventory() {
         });
 }
 
-function loadTodaysStats() {
+function loadTodaysStats(date) {
     fetch(`${BASE_URL}/api/data`)
         .then(response => response.json())
         .then(data => {
@@ -36,17 +37,17 @@ function loadTodaysStats() {
             statsTable.innerHTML = '';
             let totalStats = 0;
 
-            data.transactions.forEach((transaction, index) => {
-                if (transaction.action === 'Sold') {
-                    const row = statsTable.insertRow();
-                    row.insertCell().textContent = transaction.action;
-                    row.insertCell().textContent = transaction.book;
-                    row.insertCell().textContent = transaction.quantity;
-                    row.insertCell().textContent = transaction.total.toLocaleString();
-                    row.insertCell().textContent = transaction.timestamp;
-                    totalStats += transaction.total;
+            data.transactions.filter(transaction => new Date(transaction.timestamp).toDateString() === date.toDateString()).forEach((transaction, index) => {
+                const row = statsTable.insertRow();
+                row.insertCell().textContent = transaction.action;
+                row.insertCell().textContent = transaction.book;
+                row.insertCell().textContent = transaction.quantity;
+                row.insertCell().textContent = transaction.total.toLocaleString();
+                row.insertCell().textContent = transaction.timestamp;
 
-                    const deleteCell = row.insertCell();
+                const deleteCell = row.insertCell();
+                if (transaction.action === 'Sold') {
+                    totalStats += transaction.total;
                     const deleteIcon = document.createElement('i');
                     deleteIcon.classList.add('bi', 'bi-trash', 'delete-icon');
                     deleteIcon.style.cursor = 'pointer';
@@ -56,6 +57,7 @@ function loadTodaysStats() {
             });
 
             document.getElementById('totalStats').textContent = totalStats.toLocaleString();
+            document.getElementById('statsDate').textContent = date.toDateString();
         });
 }
 
@@ -152,7 +154,7 @@ function addTransaction(action, title, quantity) {
     })
         .then(response => response.json())
         .then(() => {
-            loadTodaysStats();
+            loadTodaysStats(currentDate);
         });
 }
 
@@ -194,41 +196,18 @@ function deleteTransaction(index) {
     })
         .then(response => response.json())
         .then(() => {
-            loadTodaysStats();
+            loadTodaysStats(currentDate);
         });
 }
 
-function filterStatsByDate() {
-    const filterDate = document.getElementById('filterDate').value;
-    if (!filterDate) {
-        alert('Please select a date');
-        return;
-    }
+function previousDay() {
+    currentDate.setDate(currentDate.getDate() - 1);
+    loadTodaysStats(currentDate);
+}
 
-    fetch(`${BASE_URL}/api/data`)
-        .then(response => response.json())
-        .then(data => {
-            const statsTable = document.getElementById('statsTable').getElementsByTagName('tbody')[0];
-            statsTable.innerHTML = '';
-
-            data.transactions.filter(transaction => {
-                return transaction.timestamp.startsWith(filterDate);
-            }).forEach((transaction, index) => {
-                const row = statsTable.insertRow();
-                row.insertCell().textContent = transaction.action;
-                row.insertCell().textContent = transaction.book;
-                row.insertCell().textContent = transaction.quantity;
-                row.insertCell().textContent = transaction.total.toLocaleString();
-                row.insertCell().textContent = transaction.timestamp;
-
-                const deleteCell = row.insertCell();
-                const deleteIcon = document.createElement('i');
-                deleteIcon.classList.add('bi', 'bi-trash', 'delete-icon');
-                deleteIcon.style.cursor = 'pointer';
-                deleteIcon.addEventListener('click', () => deleteTransaction(index));
-                deleteCell.appendChild(deleteIcon);
-            });
-        });
+function nextDay() {
+    currentDate.setDate(currentDate.getDate() + 1);
+    loadTodaysStats(currentDate);
 }
 
 function exportCurrentInventory() {
@@ -244,7 +223,7 @@ function exportTodaysStatistics() {
     fetch(`${BASE_URL}/api/data`)
         .then(response => response.json())
         .then(data => {
-            const csv = convertToCSV(data.transactions.filter(transaction => transaction.action === 'Sold'));
+            const csv = convertToCSV(data.transactions.filter(transaction => new Date(transaction.timestamp).toDateString() === currentDate.toDateString()));
             downloadCSV(csv, 'todays_statistics.csv');
         });
 }
@@ -269,5 +248,5 @@ function downloadCSV(csv, filename) {
 
 document.addEventListener('DOMContentLoaded', function () {
     loadInventory();
-    loadTodaysStats();
+    loadTodaysStats(currentDate);
 });

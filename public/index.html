@@ -97,6 +97,11 @@
         <div class="row mt-5">
             <div class="col-md-12">
                 <h3>Today's Statistics</h3>
+                <div class="d-flex justify-content-between mb-3">
+                    <button class="btn btn-primary" onclick="previousDay()">Previous</button>
+                    <h4 id="statsDate"></h4>
+                    <button class="btn btn-primary" onclick="nextDay()">Next</button>
+                </div>
                 <table class="table table-striped" id="statsTable">
                     <thead>
                         <tr>
@@ -112,11 +117,6 @@
                 </table>
                 <h4>Total Sold: <span id="totalStats"></span></h4>
                 <button class="btn btn-secondary" onclick="exportTodaysStatistics()">Export Today's Statistics</button>
-                <div class="form-group mt-3">
-                    <label for="filterDate">Filter by Date</label>
-                    <input type="date" class="form-control" id="filterDate">
-                    <button class="btn btn-primary mt-2" onclick="filterStatsByDate()">Filter</button>
-                </div>
             </div>
         </div>
     </div>
