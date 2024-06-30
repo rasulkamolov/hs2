@@ -33,7 +33,7 @@ function loadInventory() {
 
             const totalRow = document.createElement('tr');
             totalRow.innerHTML = `
-                <td colspan="2"><strong>Total Value</strong></td>
+                <td colspan="2"><strong>Umumiy Summa</strong></td>
                 <td colspan="2"><strong>${totalValue.toLocaleString()} UZS</strong></td>
             `;
             inventoryTableBody.appendChild(totalRow);
@@ -77,14 +77,14 @@ function loadTodaysStats(date) {
 
             const totalRow = document.createElement('tr');
             totalRow.innerHTML = `
-                <td colspan="3"><strong>Total Sales</strong></td>
+                <td colspan="3"><strong>Umumiy Tushum</strong></td>
                 <td colspan="4"><strong>${totalSales.toLocaleString()} UZS</strong></td>
             `;
             statsTableBody.appendChild(totalRow);
 
             const addedRow = document.createElement('tr');
             addedRow.innerHTML = `
-                <td colspan="3"><strong>Total Added Books</strong></td>
+                <td colspan="3"><strong>Umumiy qo'shilgan kitoblar</strong></td>
                 <td colspan="4"><strong>${addedBooks.toLocaleString()} Books</strong></td>
             `;
             statsTableBody.appendChild(addedRow);
@@ -114,7 +114,7 @@ function addBook() {
     })
         .then(response => response.json())
         .then(data => {
-            alert(`${data.quantity} copies of "${data.title}" added.`);
+            alert(`${data.quantity}ta "${data.title}" kitobi qo'shildi.`);
             loadInventory();
             loadTodaysStats(currentDate);
         });
@@ -135,7 +135,7 @@ function sellBook() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert(`${data.quantity} copies of "${data.title}" sold.`);
+                alert(`${data.quantity}ta "${data.title}" kitobi sotildi.`);
             } else {
                 alert(`Error: ${data.message}`);
             }
