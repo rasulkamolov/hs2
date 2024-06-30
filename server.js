@@ -74,7 +74,7 @@ app.post('/api/edit-book', (req, res) => {
     res.json({ success: true });
 });
 
-app.post('/api/delete-transaction', (req, res) => {
+app.post('/api.delete-transaction', (req, res) => {
     const { index } = req.body;
     const data = readData();
     data.transactions.splice(index, 1);

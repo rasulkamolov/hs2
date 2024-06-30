@@ -2,6 +2,11 @@ const BASE_URL = 'https://harvardbks-974c895495ee.herokuapp.com';
 
 let currentDate = new Date();
 
+function updateDateDisplay() {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('currentDateDisplay').innerText = currentDate.toLocaleDateString(undefined, options);
+}
+
 function loadInventory() {
     fetch(`${BASE_URL}/api/data`)
         .then(response => response.json())
@@ -86,13 +91,13 @@ function loadTodaysStats(date) {
         });
 }
 
-document.getElementById('addBookForm').addEventListener('submit', function (event) {
-    event.preventDefault();
+document.getElementById('addBookForm').addEventListener('submit', function (e) {
+    e.preventDefault();
     addBook();
 });
 
-document.getElementById('sellBookForm').addEventListener('submit', function (event) {
-    event.preventDefault();
+document.getElementById('sellBookForm').addEventListener('submit', function (e) {
+    e.preventDefault();
     sellBook();
 });
 
@@ -211,15 +216,18 @@ function exportTodaysStatistics() {
 
 function previousDay() {
     currentDate.setDate(currentDate.getDate() - 1);
+    updateDateDisplay();
     loadTodaysStats(currentDate);
 }
 
 function nextDay() {
     currentDate.setDate(currentDate.getDate() + 1);
+    updateDateDisplay();
     loadTodaysStats(currentDate);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    updateDateDisplay();
     loadInventory();
     loadTodaysStats(currentDate);
 });
