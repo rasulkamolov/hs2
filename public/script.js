@@ -1,4 +1,4 @@
-const BASE_URL = 'https://harvardbks-974c895495ee.herokuapp.com';
+const BASE_URL = 'https://your-app-name.herokuapp.com';
 let currentDate = new Date();
 
 function loadInventory() {
@@ -43,6 +43,7 @@ function loadTodaysStats(date) {
                 row.insertCell().textContent = transaction.book;
                 row.insertCell().textContent = transaction.quantity;
                 row.insertCell().textContent = transaction.total.toLocaleString();
+                row.insertCell().textContent = transaction.paymentType || '';
                 row.insertCell().textContent = transaction.timestamp;
 
                 const deleteCell = row.insertCell();
@@ -68,7 +69,12 @@ document.getElementById('addBookForm').addEventListener('submit', function (even
 
 document.getElementById('sellBookForm').addEventListener('submit', function (event) {
     event.preventDefault();
-    sellBook();
+    const paymentType = prompt("Select Payment Type: Cash or Click", "Cash");
+    if (paymentType !== 'Cash' && paymentType !== 'Click') {
+        alert('Invalid Payment Type');
+        return;
+    }
+    sellBook(paymentType);
 });
 
 function addBook() {
@@ -90,7 +96,7 @@ function addBook() {
         });
 }
 
-function sellBook() {
+function sellBook(paymentType) {
     const title = document.getElementById('sellBookTitle').value;
     const quantity = parseInt(document.getElementById('sellQuantity').value);
 
@@ -114,7 +120,7 @@ function sellBook() {
                 .then(() => {
                     alert(`${quantity} copies of "${title}" sold.`);
                     loadInventory();
-                    addTransaction('Sold', title, quantity);
+                    addTransaction('Sold', title, quantity, paymentType);
                 });
         });
 }
@@ -141,7 +147,7 @@ function getPrice(title) {
     return prices[title] || 0;
 }
 
-function addTransaction(action, title, quantity) {
+function addTransaction(action, title, quantity, paymentType) {
     const total = getPrice(title) * quantity;
     const timestamp = new Date().toLocaleString();
 
@@ -150,7 +156,7 @@ function addTransaction(action, title, quantity) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ action, book: title, quantity, total, timestamp })
+        body: JSON.stringify({ action, book: title, quantity, total, timestamp, paymentType })
     })
         .then(response => response.json())
         .then(() => {
